@@ -16,8 +16,10 @@ Dynamixel_Control.ino
 #include <SoftHalfDuplexSerial.h>
 #include <DynamixelAx.h>
 
-int servo_id = 1;
+
 int servo_comm_pin = 2;
+int servo_id = 1;
+
 
 softHalfDuplexSerial port(servo_comm_pin); // data pin 
 dxlAx dxlCom(&port);
@@ -207,8 +209,6 @@ float convert_units_in(float input){
       return input;
   }
 }
-
-
 /*
  * Convert the units from internal units to display units
  */
@@ -230,8 +230,6 @@ float convert_units_out(float input){
       return input;
   }
 }
-
-
 /////////////////////////////////////////////////////////////////////////////////////
 /*
  * Print Data
@@ -265,11 +263,9 @@ String command="";
 // Check for new serial data
 bool recvWithEndMarker() {
   char endMarker = '\n';
-  char rc;
-  
+  char rc;  
   while (Serial.available() > 0) {
     rc = Serial.read();
-
     if (rc != endMarker) {
       command += rc;
     }
@@ -294,7 +290,6 @@ String get_string_value(String data, char separator, int index)
   int found = 0;
   int strIndex[] = {0, -1};
   int maxIndex = data.length() - 1;
-
   for (int i = 0; i <= maxIndex && found <= index; i++) {
     if (data.charAt(i) == separator || i == maxIndex) {
       found++;
@@ -302,7 +297,6 @@ String get_string_value(String data, char separator, int index)
       strIndex[1] = (i == maxIndex) ? i + 1 : i;
     }
   }
-
   return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
 }
 
@@ -339,8 +333,7 @@ void parse_command(String command){
       dxlCom.setMovingSpeed(servo_id,speed);        
       out_str += '\t'+String(speed); 
     }
-
-    else if(command.startsWith("TORQUE")){      
+    else if(command.startsWith("TORQUE")){ //Set the torque of the servos (in direct units)     
       if (get_string_value(command,';', 1).length()){
         float allset=get_string_value(command,';', 1).toInt();        
         torque = allset;        
@@ -350,7 +343,7 @@ void parse_command(String command){
       dxlCom.setTorqueLimit(servo_id,torque);   
       out_str += '\t'+String(torque);
     }
-    else if(command.startsWith("CONT")){      
+    else if(command.startsWith("CONT")){ //Set the continuous operation mode (i.e. torque-determined stop vs. continuous torque)     
       if (get_string_value(command,';', 1).length()){
         bool allset=bool(get_string_value(command,';', 1).toInt()); 
         cont_hold = allset;        
@@ -359,73 +352,7 @@ void parse_command(String command){
       out_str+="CONT: ";      
       out_str += '\t'+String(cont_hold);    
     }
-    else if(command.startsWith("ID")){
-      if (get_string_value(command,';', 1).length()){        
-          float val = get_string_value(command,';', 1).toInt();
-          if (val<=max_pos & val>=min_pos ){
-            servo_id = val;
-          }
-        
-        new_setpoint = true;
-        out_str+="New ";
-      }
-      out_str+="ID: ";      
-      out_str += '\t'+String(servo_id);       
-    }
-    else if(command.startsWith("LED")){
-      if (get_string_value(command,';', 2).length()){
-        int id = get_string_value(command,';', 1).toInt();
-        bool val = bool(get_string_value(command,';', 2).toInt());
-        dxlCom.setLedEnable(id, val);        
-      }  
-    }
-    else if(command.startsWith("REBOOT")){
-      if (get_string_value(command,';', 1).length()){
-        int id = get_string_value(command,';', 1).toInt();
-        dxlCom.reboot(id);       
-        out_str += "REBOOT: ";
-        out_str += '\t'+String(id);
-      }
-    }
-    else if(command.startsWith("PING")){
-      if (get_string_value(command,';', 1).length()){
-        int id = get_string_value(command,';', 1).toInt();
-        dxlCom.ping(id);
-        out_str += "PING: ";
-        out_str += '\t'+String(id);
-        out_str += '\t'+String(get_result());
-      }
-    }
-    else if(command.startsWith("VOLT")){
-      out_str+="VOLT: ";      
-      dxlCom.readVoltage(servo_id);
-      out_str += '\t'+String(get_result()/10.0,1);         
-    }
-    else if(command.startsWith("TEMP")){
-      out_str+="TEMP: ";      
-      dxlCom.readTemperature(servo_id);
-      out_str += '\t'+String(get_result());      
-    }
-    else if(command.startsWith("FIRMWARE")){
-      out_str+="FIRMWARE: ";      
-      dxlCom.readFirmware(servo_id);
-      out_str += '\t'+String(get_result());
-      
-    }
-    else if(command.startsWith("MODEL")){
-      out_str+="MODEL: ";      
-      dxlCom.readModelNumber(servo_id);
-      out_str += '\t'+String(get_result());    
-    }
-    else if(command.startsWith("ON")){
-      data_on = true;
-      out_str+="ON: "; 
-    }
-    else if(command.startsWith("OFF")){
-      data_on = false;
-      out_str+="OFF: "; 
-    }    
-    else if(command.startsWith("MAX")){      
+    else if(command.startsWith("MAX")){ //Set the maximum position of the servos (in direct units)      
       if (get_string_value(command,';', 1).length()){
         float allset=get_string_value(command,';', 1).toInt();
         max_pos = allset;     
@@ -433,11 +360,8 @@ void parse_command(String command){
       }
       out_str+="MAX: ";      
       out_str += '\t'+String(max_pos);
-      
-      
     }
-
-    else if(command.startsWith("MIN")){      
+    else if(command.startsWith("MIN")){ //Set the maximum position of the servos (in direct units)    
       if (get_string_value(command,';', 1).length()){
         float allset=get_string_value(command,';', 1).toInt();      
         min_pos = allset;     
@@ -446,8 +370,22 @@ void parse_command(String command){
       out_str+="MIN: ";      
       out_str += '\t'+String(min_pos);    
     }
-
-    else if(command.startsWith("ECHO")){
+    else if(command.startsWith("ON")){ //Turn on live data output
+      data_on = true;
+      out_str+="ON: "; 
+    }
+    else if(command.startsWith("OFF")){ //Turn off live data output
+      data_on = false;
+      out_str+="OFF: "; 
+    } 
+    else if(command.startsWith("UNITS")){ //Set the output units
+      if (get_string_value(command,';', 1).length()){
+        units = constrain(get_string_value(command,';', 1).toInt(),0,4);
+        out_str+="New ";
+      }
+      out_str+="UNITS: " + String(units); 
+    }  
+    else if(command.startsWith("ECHO")){ //Set the state of command echos
       if (get_string_value(command,';', 1).length()){
         echo_global = bool(get_string_value(command,';', 1).toInt());
         echo_one_time = true;
@@ -455,15 +393,51 @@ void parse_command(String command){
       }
       out_str+="ECHO: " + String(echo_global);
     }
-
-
-    else if(command.startsWith("UNITS")){
+    else if(command.startsWith("REBOOT")){ //Reboot a servo
       if (get_string_value(command,';', 1).length()){
-        units = constrain(get_string_value(command,';', 1).toInt(),0,4);
-        out_str+="New ";
+        int id = get_string_value(command,';', 1).toInt();
+        dxlCom.reboot(id);       
+        out_str += "REBOOT: ";
+        out_str += '\t'+String(id);
       }
-      out_str+="UNITS: " + String(units); 
-    }    
+    }
+    else if(command.startsWith("PING")){ //Ping a servo
+      if (get_string_value(command,';', 1).length()){
+        int id = get_string_value(command,';', 1).toInt();
+        dxlCom.ping(id);
+        out_str += "PING: ";
+        out_str += '\t'+String(id);
+        out_str += '\t'+String(get_result());
+      }
+    }
+    else if(command.startsWith("VOLT")){ //Get the voltage (in V) of all servos
+      out_str+="VOLT: ";      
+      dxlCom.readVoltage(servo_id);
+      out_str += '\t'+String(get_result()/10.0,1);         
+    }
+    else if(command.startsWith("TEMP")){ //Get the temperature (in C) of all servos
+      out_str+="TEMP: ";      
+      dxlCom.readTemperature(servo_id);
+      out_str += '\t'+String(get_result());      
+    }
+    else if(command.startsWith("FIRMWARE")){ //Get the firmware number of all servos
+      out_str+="FIRMWARE: ";      
+      dxlCom.readFirmware(servo_id);
+      out_str += '\t'+String(get_result());
+      
+    }
+    else if(command.startsWith("MODEL")){ //Get the model number of all servos
+      out_str+="MODEL: ";      
+      dxlCom.readModelNumber(servo_id);
+      out_str += '\t'+String(get_result());    
+    }
+    else if(command.startsWith("LED")){ //Set the LED state of a servo
+      if (get_string_value(command,';', 2).length()){
+        int id = get_string_value(command,';', 1).toInt();
+        bool val = bool(get_string_value(command,';', 2).toInt());
+        dxlCom.setLedEnable(id, val);        
+      }  
+    }   
     else{
       out_str = "Unrecognized Command: ";  
       out_str += command;
@@ -473,10 +447,7 @@ void parse_command(String command){
       echo_one_time = false;
     }
   }
- }
-
-
-
+}
 /////////////////////////////////////////////////////////////////////////////////////
 /*
  * Functions to Obtain Results from Motor
@@ -488,13 +459,10 @@ int get_result(){ //This function returns the result of the last data call and a
     printDxlError(error);
   return  dxlCom.readDxlResult();
 }
-
 void clear_result(){ //This functions resets the motor to prepare for new information by reading error and result
   dxlCom.readDxlError();
   dxlCom.readDxlResult();
 }
-
-
 /////////////////////////////////////////////////////////////////////////////////////
 /*
  * Dynamixel Library Functions
@@ -505,7 +473,6 @@ void printDxlResult()
    printDxlError(dxlCom.readDxlError());
    Serial.println(dxlCom.readDxlResult());
 }
-
 void printServoId(String msg)
 {
   Serial.print(msg);
@@ -513,7 +480,6 @@ void printServoId(String msg)
   Serial.print(_id);
   Serial.print(" - ");
 }
-
 void printDxlError(unsigned short dxlError)
 {
   // after any operation error can be retrieve using dx::readDxlResult() (i.e. after read or write operation)
@@ -551,9 +517,4 @@ void printDxlError(unsigned short dxlError)
       Serial.print("Wrong ID answered-"); // ?? Hardware issue
     Serial.println();
   }
-}
-
-// Float mapping (not native to arduino for some reason)
-float mapFloat(float x, float in_min, float in_max, float out_min, float out_max) {
-  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
