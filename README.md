@@ -1,5 +1,5 @@
 # dynamixel_servo
-A program to run a Dynamixel AX-12A servo motor. Modified from [cbteeple's repo](https://github.com/cbteeple/dynamixel_servo) 
+A program to run a Dynamixel AX-12A servo motor. Modified from [cbteeple's repo](https://github.com/cbteeple/dynamixel_servo). 
 
 ## Dependencies:
 - [HalfDuplexSerial-for-Arduino](https://github.com/akira215/HalfDuplexSerial-for-Arduino) library (_required_) - For communicating with the servos via half-duplex serial
@@ -51,7 +51,7 @@ Send serial commands using a `[COMMAND];[ARG];[ARG]...` structure. This struture
 - **OFF** - Turn off live data output
   - **OFF** - (No Args)
 - **UNITS** - Set the output units 
-  - **UNITS;_[#1]_** - #1 (`int`) is the unit type: (0 = direct servo units, 1 = angle (degrees), 2 = angle (radians), 3 = gripper width (mm)). Gripper width units are calculated for the [Trossen Phantom Parallel Gripper](https://www.trossenrobotics.com/p/phantomx-parallel-ax12-gripper.aspx)
+  - **UNITS;_[#1]_** - #1 (`int`) is the unit type: (0 = direct servo units, 1 = angle (degrees), 2 = angle (radians), 3 = arrangement space value). Arrangement space values as defined in [this paper](https://cv.cbteeple.com/papers/teeple2021arrangement.pdf). 
 - **ECHO** - Set the state of command echos
   - **ECHO;_[#1]_** - #1 is the echo state (0=off, 1=on)
 
