@@ -7,9 +7,9 @@ A program to run a Dynamixel AX-12A servo motor. Modified from [cbteeple's repo]
 - [Ax-12A-servo-library](https://github.com/jumejume1/AX-12A-servo-library) library (_optional_) - For connecting to servos via hardware serial (used for changing baud rates)
 
 ## Setup
-1. Use "DynamixelBaudSwitch" to switch the baud rate of your servo to **57600**.
-	- Be sure to connect the data line of the servo to the TX pin on your arduino.
-	- Upload the program to the arduino. That's it.
+1. Use "DynamixelBaudSwitch" from [here](https://github.com/cbteeple/dynamixel_servo) to switch the baud rate of your servo to **57600**.
+	1. Be sure to connect the data line of the servo to the TX pin on your Arduino.
+	2. Upload the program to the Arduino.
 2. Upload the "Dynamixel_Control_single" firmware.
 	1. Define the comm pin to use (since dynamixels can be daisy-chained). This pin needs to have interrupt capabillities to work correctly.
 	2. Define servo ID (This is the internal ID of the servo. Default is 1.)
@@ -18,7 +18,7 @@ A program to run a Dynamixel AX-12A servo motor. Modified from [cbteeple's repo]
 	int servo_comm_pin = 2;
 	int servo_id = 1;
 	```
-	3. Upload the program to an Arduino (I used an Arduino Nano).
+	3. Upload the program to an Arduino (Tested on an Arduino Nano).
 	4. Set up your servo with 12V power and reset the arduino (power cycle).
 ## Usage
 Send serial commands using a `[COMMAND];[ARG];[ARG]...` structure. This struture is described in detail in the [documentation for Ctrl-P](https://ctrl-p.cbteeple.com/latest/firmware/firmware_commands), but this servo program uses a different command set.
