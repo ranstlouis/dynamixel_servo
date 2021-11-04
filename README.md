@@ -1,5 +1,6 @@
 # dynamixel_servo
 A program to run a Dynamixel AX-12A servo motor
+Built from [cbteeple's repo] (https://github.com/cbteeple/dynamixel_servo)
 
 ## Dependencies:
 - [HalfDuplexSerial-for-Arduino](https://github.com/akira215/HalfDuplexSerial-for-Arduino) library (_required_) - For communicating with the servos via half-duplex serial
