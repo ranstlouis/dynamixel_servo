@@ -1,6 +1,7 @@
 /*
-Dynamixel_Control.ino
+Dynamixel_Control_single.ino
   written by ranstlouis
+  edited from cbteeple's work (https://github.com/cbteeple/dynamixel_servo)
   11/3/21
   *****************************************************************************
   Decription:
@@ -56,7 +57,7 @@ int  get_result();
 
 unsigned int pos_init = 400;
 unsigned int max_pos_init = 512; // 90 degrees
-unsigned int min_pos_init = 203; // ~0 degrees
+unsigned int min_pos_init = 195; //  ~-2 degrees
 float pi = 3.14159265;
 
 void setup() {
@@ -77,8 +78,8 @@ void setup() {
   curr_pos = get_result(); // Gives the result of the most recent "read". In this case, the present position
   max_pos  = max_pos_init;
   min_pos  = min_pos_init;
-  speed    = 1023;         //Start with max speed
-  torque   = 1023;         //Start with max torque
+  speed    = 300;         
+  torque   = 1023;         
   cont_hold   = false;     //Start with no continuous hold
 
   dxlCom.setTorqueLimit(servo_id,torque);
@@ -355,7 +356,7 @@ void parse_command(String command){
     else if(command.startsWith("MAX")){ //Set the maximum position of the servos (in direct units)      
       if (get_string_value(command,';', 1).length()){
         float allset=get_string_value(command,';', 1).toInt();
-        max_pos = allset;     
+        max_pos = convert_units_in(allset);     
         out_str+="New ";
       }
       out_str+="MAX: ";      
@@ -364,7 +365,7 @@ void parse_command(String command){
     else if(command.startsWith("MIN")){ //Set the maximum position of the servos (in direct units)    
       if (get_string_value(command,';', 1).length()){
         float allset=get_string_value(command,';', 1).toInt();      
-        min_pos = allset;     
+        min_pos = convert_units_in(allset);     
         out_str+="New ";
       }
       out_str+="MIN: ";      
